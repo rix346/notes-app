@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:setup": "psql -U postgres -d notes_app -f db/schema.sql -f db/seed.sql"
   },
   "dependencies": {
     "next": "16.4.3",

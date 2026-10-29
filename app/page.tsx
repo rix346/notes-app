@@ -1,10 +1,24 @@
 import { pool } from '@/lib/db'
+import { revalidatePath } from 'next/cache';
 
 type Note = {
   id: number;
   title: string;
   content: string | null;
   created_at: Date;
+}
+
+async function addNote(formData: FormData) {
+  "use server";
+  const title = formData.get("title") as string;
+  const content = formData.get("content" as string) || null;
+
+  await pool.query(
+    "INSERT INTO notes (title, content) VALUES ($1, $2)",
+    [title, content]
+  );
+
+  revalidatePath("/");
 }
 
 export default async function Home() {
@@ -14,6 +28,11 @@ export default async function Home() {
   const notes = result.rows;
   return (
     <main>
+      <form action={addNote}>
+      <input name="title" required maxLength={100} /> 
+      <textarea name="content" />
+      <button type="submit">Add Note</button>
+      </form>
       <h1>Notes</h1>
       <ul>
         {notes.map((note) => (
